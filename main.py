@@ -53,8 +53,8 @@ def main():
         dateStart = startSplit1[0]
         timeStart = startSplit1[1]
 
-        dateFinal = dateStart.split('-')
-        print(dateFinal)
+        dateStartFinal = dateStart.split('-')
+        print(dateStartFinal)
 
         #Check Weather positive or negative time Zone
         #Use '+' or '-' in Main string.
@@ -64,14 +64,63 @@ def main():
 
         print(timeFinalStart)
         print(timeZoneStart)
+        print(timeZoneStart)
 
         hourStart = timeFinalStart[0]
         minuteStart = timeFinalStart[1]
         secStart = timeFinalStart[2]
 
 
-
         end = event['end'].get('dateTime', event['end'].get('date'))
+
+        endSplit1 = end.split('T')
+
+        dateEndFinal = endSplit1[0].split('-')
+        timeEnd = endSplit1[1]
+
+        timeSplitEnd = timeEnd.split('+')
+        timeFinalEnd = timeSplitEnd[0].split(':')
+        timeZoneEnd = timeSplitEnd[1]
+
+        #Calculate if there is a day difference
+        #Check what Month it is
+        #Check if Leap Year
+        deltaYear = int(dateEndFinal[0]) - int(dateStartFinal[0])
+        deltaMonth = int(dateEndFinal[1]) - int(dateStartFinal[1])
+        deltaDay = int(dateEndFinal[2]) - int(dateStartFinal[2])
+
+        deltaCheck = deltaYear + deltaMonth + deltaDay
+
+
+        if deltaCheck > 0:
+            totalDays = deltaYear * 365 + deltaMonth * 31 + deltaDay
+
+            timeHourStart = 24 - int(timeFinalStart[0])
+            minConv = int(timeFinalStart[1]) / 60
+            StartTime1 = timeHourStart - minConv
+
+            dayHour = (totalDays - 1) * 24
+
+            minConv = int(timeFinalEnd[1]) / 60
+            EndTime1 = int(timeFinalEnd[0]) + minConv
+
+            FinalTime = StartTime1 + dayHour + EndTime1
+            print(FinalTime)
+
+
+
+        else:
+            deltaHour = int(timeFinalEnd[0]) - int(timeFinalStart[0])
+            deltaMin = int(timeFinalEnd[1]) - int(timeFinalStart[1])
+            deltaSec = int(timeFinalEnd[2]) - int(timeFinalStart[2])
+
+            hourMin = deltaHour * 60
+
+            finalTime = hourMin - deltaMin
+            print(finalTime)
+
+
+
         print(start,end, event['summary'], event['colorId'])
 
 
