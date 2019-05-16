@@ -1,5 +1,6 @@
 from __future__ import print_function
 import datetime
+import  pymysql
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -13,6 +14,25 @@ def main():
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
+
+    ip_adressS = 'localhost'
+    usernameS = 'root'
+    passwordS = 'xxmaster'
+    db_nameS = 'temps'
+
+    #
+    #
+    #
+
+    # Connection to Database.
+    db = pymysql.connect(ip_adressS, usernameS, passwordS, db_nameS)
+
+    # prepare a cursor object using cursor() method
+    cursor = db.cursor()
+
+    # Pull all the record in the data base.
+
+
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -104,7 +124,8 @@ def main():
             minConv = int(timeFinalEnd[1]) / 60
             EndTime1 = int(timeFinalEnd[0]) + minConv
 
-            FinalTime = StartTime1 + dayHour + EndTime1
+            FinalTime = (StartTime1 + dayHour + EndTime1) * 60
+
             print(FinalTime)
 
 
@@ -116,14 +137,25 @@ def main():
 
             hourMin = deltaHour * 60
 
-            finalTime = hourMin - deltaMin
-            print(finalTime)
+            FinalTime = hourMin - deltaMin
+            print(FinalTime)
 
+
+        EventName = event['summary']
+        colorId = event['colorId']
+        sql1 = 'insert into temps_testing (EventName,color,StartTime,EndTime,TotalTime) VALUES ("{0}","{1}","{2}","{3}",{4})'.format(EventName,colorId,start,end,FinalTime)
+        try:
+        	cursor.execute(sql1)
+        	db.commit()
+        	print('Data has been Entered into the DataBase')
+        except:
+        	db.rollback()
+        	print("There has been an error with entering the data.")
 
 
         print(start,end, event['summary'], event['colorId'])
 
-
+    db.close()
 
 if __name__ == '__main__':
     main()
