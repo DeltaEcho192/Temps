@@ -162,8 +162,8 @@ def main():
         except:
             colorId = 1
         eventsNameArrCP = eventsNameArr
-        print(SQLTimeStart)
-        print(StartTimeArr)
+        #print(SQLTimeStart)
+        #print(StartTimeArr)
         #print(SQLTimeEnd)
         if EventName in eventsNameArr and SQLTimeStart in StartTimeArr and SQLTimeEnd in EndTimeArr:
             #print("Event has already been entered")
@@ -201,9 +201,14 @@ def main():
 
             elif deltaCheck == 0:
                 deltaHour = int(timeFinalEnd[0]) - int(timeFinalStart[0])
+                print(deltaHour)
                 deltaMin = int(timeFinalEnd[1]) - int(timeFinalStart[1])
+                print(deltaMin)
                 deltaSec = int(timeFinalEnd[2]) - int(timeFinalStart[2])
 
+
+                if deltaHour == 0:
+                    deltaHour = deltaHour + 1
                 hourMin = deltaHour * 60
 
                 FinalTime = hourMin - deltaMin
