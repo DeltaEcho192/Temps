@@ -69,7 +69,7 @@ def main():
     ###
 
     sql = "SELECT * FROM temps_testing;"
-    print(sql)
+    #print(sql)
     try:
         # Execute the SQL command
         cursor.execute(sql)
@@ -85,6 +85,9 @@ def main():
             EndTime = row[3]
             TotalTime = row[4]
             # Now print fetched result
+            StartTime = str(StartTime.strftime("%Y-%m-%d %H:%M:%S"))
+            EndTime = str(EndTime.strftime("%Y-%m-%d %H:%M:%S"))
+
             eventsNameArr.append(eventName)
             StartTimeArr.append(StartTime)
             EndTimeArr.append(EndTime)
@@ -104,7 +107,7 @@ def main():
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
 
-
+    #TODO Add the timeZone Change
     if not events:
         print('No upcoming events found.')
     for event in events:
@@ -120,12 +123,15 @@ def main():
         dateStartFinal = dateStart.split('-')
         #print(dateStartFinal)
 
-        #TODO Check Weather positive or negative time Zone
-        #Use '+' or '-' in Main string.
-        timeSplitStart = timeStart.split('+')
+        if '+' in timeStart:
+            timeSplitStart = timeStart.split('+')
+        elif '-' in timeStart:
+            timeSplitStart = timeStart.split('-')
+
         SQLTimeStart = dateStart + ' ' + timeSplitStart[0]
         timeFinalStart = timeSplitStart[0].split(':')
         timeZoneStart = timeSplitStart[1]
+        #print(timeZoneStart)
 
         #print(timeFinalStart)
         #print(timeZoneStart)
@@ -156,9 +162,13 @@ def main():
         except:
             colorId = 1
         eventsNameArrCP = eventsNameArr
-
-        if EventName in eventsNameArr and start in StartTimeArr and end in EndTimeArr:
+        print(SQLTimeStart)
+        print(StartTimeArr)
+        #print(SQLTimeEnd)
+        if EventName in eventsNameArr and SQLTimeStart in StartTimeArr and SQLTimeEnd in EndTimeArr:
             #print("Event has already been entered")
+            #print(SQLTimeStart)
+            #print(SQLTimeEnd)
             eventsNameArrCP.remove(EventName)
         else:
 
@@ -185,7 +195,7 @@ def main():
 
                 FinalTime = (StartTime1 + dayHour + EndTime1) * 60
 
-                print(FinalTime)
+                #print(FinalTime)
 
 
 
@@ -197,7 +207,7 @@ def main():
                 hourMin = deltaHour * 60
 
                 FinalTime = hourMin - deltaMin
-                print(FinalTime)
+                #print(FinalTime)
 
 
 
