@@ -64,9 +64,53 @@ def main():
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
+    ###
+    ###
+    ###
+
+    sql = "SELECT * FROM temps_testing;"
+    print(sql)
+    try:
+        # Execute the SQL command
+        cursor.execute(sql)
+        # Fetch all the rows in a list of lists.
+        results = cursor.fetchall()
+        eventsNameArr = []
+        StartTimeArr = []
+        EndTimeArr = []
+        for row in results:
+            eventName = row[0]
+            color = row[1]
+            StartTime = row[2]
+            EndTime = row[3]
+            TotalTime = row[4]
+            # Now print fetched result
+            eventsNameArr.append(eventName)
+            StartTimeArr.append(StartTime)
+            EndTimeArr.append(EndTime)
+
+    except:
+        print("Error: unable to fecth data")
+        exit()
+
+    db.close()
+
+    ###
+    ###
+    ###
+
+    db = pymysql.connect(ip_adressS, usernameS, passwordS, db_nameS)
+
+    # prepare a cursor object using cursor() method
+    cursor = db.cursor()
+
+
     if not events:
         print('No upcoming events found.')
     for event in events:
+        UserInfo = event['creator']
+        email = UserInfo.get('email')
+        #print(email)
         start = event['start'].get('dateTime', event['start'].get('date'))
         startSplit1 = start.split('T')
 
@@ -74,17 +118,18 @@ def main():
         timeStart = startSplit1[1]
 
         dateStartFinal = dateStart.split('-')
-        print(dateStartFinal)
+        #print(dateStartFinal)
 
-        #Check Weather positive or negative time Zone
+        #TODO Check Weather positive or negative time Zone
         #Use '+' or '-' in Main string.
         timeSplitStart = timeStart.split('+')
+        SQLTimeStart = dateStart + ' ' + timeSplitStart[0]
         timeFinalStart = timeSplitStart[0].split(':')
         timeZoneStart = timeSplitStart[1]
 
-        print(timeFinalStart)
-        print(timeZoneStart)
-        print(timeZoneStart)
+        #print(timeFinalStart)
+        #print(timeZoneStart)
+        #print(timeZoneStart)
 
         hourStart = timeFinalStart[0]
         minuteStart = timeFinalStart[1]
@@ -99,62 +144,92 @@ def main():
         timeEnd = endSplit1[1]
 
         timeSplitEnd = timeEnd.split('+')
+        SQLTimeEnd = timeSplitEnd[0]
+        #Reverse Order TODO
+        SQLTimeEnd = endSplit1[0] + ' ' + SQLTimeEnd
         timeFinalEnd = timeSplitEnd[0].split(':')
         timeZoneEnd = timeSplitEnd[1]
 
-        #Calculate if there is a day difference
-        #Check what Month it is
-        #Check if Leap Year
-        deltaYear = int(dateEndFinal[0]) - int(dateStartFinal[0])
-        deltaMonth = int(dateEndFinal[1]) - int(dateStartFinal[1])
-        deltaDay = int(dateEndFinal[2]) - int(dateStartFinal[2])
-
-        deltaCheck = deltaYear + deltaMonth + deltaDay
-
-
-        if deltaCheck > 0:
-            totalDays = deltaYear * 365 + deltaMonth * 31 + deltaDay
-
-            timeHourStart = 24 - int(timeFinalStart[0])
-            minConv = int(timeFinalStart[1]) / 60
-            StartTime1 = timeHourStart - minConv
-
-            dayHour = (totalDays - 1) * 24
-
-            minConv = int(timeFinalEnd[1]) / 60
-            EndTime1 = int(timeFinalEnd[0]) + minConv
-
-            FinalTime = (StartTime1 + dayHour + EndTime1) * 60
-
-            print(FinalTime)
-
-
-
-        else:
-            deltaHour = int(timeFinalEnd[0]) - int(timeFinalStart[0])
-            deltaMin = int(timeFinalEnd[1]) - int(timeFinalStart[1])
-            deltaSec = int(timeFinalEnd[2]) - int(timeFinalStart[2])
-
-            hourMin = deltaHour * 60
-
-            FinalTime = hourMin - deltaMin
-            print(FinalTime)
-
-
         EventName = event['summary']
-        colorId = event['colorId']
-        sql1 = 'insert into temps_testing (EventName,color,StartTime,EndTime,TotalTime) VALUES ("{0}","{1}","{2}","{3}",{4})'.format(EventName,colorId,start,end,FinalTime)
         try:
-        	cursor.execute(sql1)
-        	db.commit()
-        	print('Data has been Entered into the DataBase')
+            colorId = event['colorId']
         except:
-        	db.rollback()
-        	print("There has been an error with entering the data.")
+            colorId = 1
+        eventsNameArrCP = eventsNameArr
+
+        if EventName in eventsNameArr and start in StartTimeArr and end in EndTimeArr:
+            #print("Event has already been entered")
+            eventsNameArrCP.remove(EventName)
+        else:
+
+            #Check what Month it is
+            #Check if Leap Year
+            deltaYear = int(dateEndFinal[0]) - int(dateStartFinal[0])
+            deltaMonth = int(dateEndFinal[1]) - int(dateStartFinal[1])
+            deltaDay = int(dateEndFinal[2]) - int(dateStartFinal[2])
+
+            deltaCheck = deltaYear + deltaMonth + deltaDay
 
 
-        print(start,end, event['summary'], event['colorId'])
+            if deltaCheck > 0:
+                totalDays = deltaYear * 365 + deltaMonth * 30.436875 + deltaDay
 
+                timeHourStart = 24 - int(timeFinalStart[0])
+                minConv = int(timeFinalStart[1]) / 60
+                StartTime1 = timeHourStart - minConv
+
+                dayHour = (totalDays - 1) * 24
+
+                minConv = int(timeFinalEnd[1]) / 60
+                EndTime1 = int(timeFinalEnd[0]) + minConv
+
+                FinalTime = (StartTime1 + dayHour + EndTime1) * 60
+
+                print(FinalTime)
+
+
+
+            elif deltaCheck == 0:
+                deltaHour = int(timeFinalEnd[0]) - int(timeFinalStart[0])
+                deltaMin = int(timeFinalEnd[1]) - int(timeFinalStart[1])
+                deltaSec = int(timeFinalEnd[2]) - int(timeFinalStart[2])
+
+                hourMin = deltaHour * 60
+
+                FinalTime = hourMin - deltaMin
+                print(FinalTime)
+
+
+
+            sql1 = 'insert into temps_testing (EventName,color,StartTime,EndTime,TotalTime,email) VALUES ("{0}","{1}","{2}","{3}",{4},"{5}")'.format(EventName,colorId,SQLTimeStart,SQLTimeEnd,FinalTime,email)
+            print(sql1)
+            try:
+            	cursor.execute(sql1)
+            	db.commit()
+            	print('Data has been Entered into the DataBase')
+            except:
+            	db.rollback()
+            	print("There has been an error with entering the data.")
+
+
+        print("Start Time: ",start," End time ",end," EventColor: ", colorId," Event Name: ",event['summary'])
+
+    print(eventsNameArrCP)
+    if len(eventsNameArrCP) > 0:
+        print("Files have been deleted in the calendar")
+        r = 0
+        while r < len(eventsNameArrCP):
+            condition2 = eventsNameArrCP[r]
+		#The SQL Code Needed.
+            sql2 = "DELETE FROM temps_testing WHERE EventName = '{0}'".format(condition2)
+            print("Delete Statment", sql2)
+            try:
+                cursor.execute(sql2)
+                db.commit()
+                print("Command has been executed")
+            except:
+                print("The Command did not go through.")
+            r = r + 1
     db.close()
 
 if __name__ == '__main__':
