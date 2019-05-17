@@ -160,7 +160,7 @@ def main():
         try:
             colorId = event['colorId']
         except:
-            colorId = 1
+            colorId = 7
         eventsNameArrCP = eventsNameArr
         #print(SQLTimeStart)
         #print(StartTimeArr)
@@ -201,9 +201,9 @@ def main():
 
             elif deltaCheck == 0:
                 deltaHour = int(timeFinalEnd[0]) - int(timeFinalStart[0])
-                print(deltaHour)
+                #print(deltaHour)
                 deltaMin = int(timeFinalEnd[1]) - int(timeFinalStart[1])
-                print(deltaMin)
+                #print(deltaMin)
                 deltaSec = int(timeFinalEnd[2]) - int(timeFinalStart[2])
 
 

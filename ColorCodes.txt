@@ -1,0 +1,13 @@
+Color Codes
+
+1 Light Purple
+2 Sage
+3 Purple
+4 Salmon
+5 Yellow
+6 Orange
+7 Blue
+8 Grey
+9 DarkBlue
+10 Green
+11 Red
