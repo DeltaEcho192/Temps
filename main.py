@@ -60,7 +60,7 @@ def main():
     print(now)
     print('Getting the past events')
     events_result = service.events().list(calendarId='primary', timeMin=old, timeMax=now,
-                                        maxResults=10, singleEvents=True,
+                                        maxResults=1000, singleEvents=True,
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
@@ -158,7 +158,7 @@ def main():
 
         EventName = event['summary']
         try:
-            colorId = event['colorId']
+            colorId = int(event['colorId'])
         except:
             colorId = 7
         eventsNameArrCP = eventsNameArr

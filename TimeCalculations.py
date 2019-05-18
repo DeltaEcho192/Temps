@@ -1,6 +1,8 @@
 import datetime
 import  pymysql
 
+#TODO How to intergrate with Website
+
 ip_adressS = 'localhost'
 usernameS = 'root'
 passwordS = 'xxmaster'
@@ -50,9 +52,76 @@ except:
     print("Error: unable to fecth data")
     exit()
 
+
+x = 0
+lightPurple = []
+Sage = []
+Purple = []
+Salmon = []
+Yellow = []
+Orange = []
+Blue = []
+Grey = []
+DarkBlue =[]
+Green = []
+Red = []
+
+while x < len(eventsNameArr):
+    colorTemp = ColorArr[x]
+    if colorTemp == 1:
+        #print("Light Purple")
+        lightPurple.append(TotalTimeArr[x])
+    if colorTemp == 2:
+        #print("Sage")
+        Sage.append(TotalTimeArr[x])
+    if colorTemp == 3:
+        #print("Purple")
+        Purple.append(TotalTimeArr[x])
+    if colorTemp == 4:
+        #print("Salmon")
+        Salmon.append(TotalTimeArr[x])
+    if colorTemp == 5:
+        #print("Yellow")
+        Yellow.append(TotalTimeArr[x])
+    if colorTemp == 6:
+        #print("Orange")
+        Orange.append(TotalTimeArr[x])
+    if colorTemp == 7:
+        #print("Blue")
+        Blue.append(TotalTimeArr[x])
+    if colorTemp == 8:
+        #print("Grey")
+        Grey.append(TotalTimeArr[x])
+    if colorTemp == 9:
+        #print("DarkBlue")
+        DarkBlue.append(TotalTimeArr[x])
+    if colorTemp == 10:
+        #print("Green")
+        Green.append(TotalTimeArr[x])
+    if colorTemp == 11:
+        #print("Red")
+        Red.append(TotalTimeArr[x])
+    x = x + 1
+
 outputTime = sum(TotalTimeArr)
-print(eventsNameArr)
-print(ColorArr)
-print(TotalTimeArr)
-print(outputTime)
+print("Light Purple: ",sum(lightPurple))
+print("Sage: ",sum(Sage))
+print("Purple: ",sum(Purple))
+print("Salmon: ",sum(Salmon))
+print("Yellow: ",sum(Yellow))
+print("Orange: ",sum(Orange))
+print("Blue: ",sum(Blue))
+print("Grey: ",sum(Grey))
+print("DarkBlue: ",sum(DarkBlue))
+print("Green: ",sum(Green))
+print("Red: ",sum(Red))
+
+#print(eventsNameArr)
+#print(ColorArr)
+print("Total Time: ", sum(TotalTimeArr)/60,": Hours")
+#print(outputTime)
+
+#Calculate most common time for events
+#Which Event Color is most common at what hours
+
 db.close()
